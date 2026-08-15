@@ -1,7 +1,6 @@
 ﻿using GeekShopping.ProductAPI.Model.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.PortableExecutable;
 
 namespace GeekShopping.ProductAPI.Model
 {
@@ -20,14 +19,14 @@ namespace GeekShopping.ProductAPI.Model
 
         [Column("description")]
         [StringLength(500)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Column("category_name")]
         [StringLength(50)]
-        public string CategoryName { get; set; }
+        public string? CategoryName { get; set; }
 
         [Column("image_url")]
         [StringLength(300)]
-        public string ImageURL { get; set; }
+        public string? ImageURL { get; set; }
     }
 }
