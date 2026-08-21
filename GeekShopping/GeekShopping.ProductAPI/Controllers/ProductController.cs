@@ -16,7 +16,7 @@ namespace GeekShopping.ProductAPI.Controllers
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
-        [Authorize]
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductVO>>> FindAll()
         {
@@ -24,8 +24,8 @@ namespace GeekShopping.ProductAPI.Controllers
             return Ok(products);
         }
 
-        [Authorize]
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult> FindById(long id)
         {
             var product = await _repository.FindById(id);
@@ -33,8 +33,8 @@ namespace GeekShopping.ProductAPI.Controllers
             return Ok(product);
         }
 
-        [Authorize]
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> Create([FromBody]ProductVO vo)
         {
             if (vo == null) return BadRequest();
@@ -42,8 +42,8 @@ namespace GeekShopping.ProductAPI.Controllers
             return Ok(product);
         }
 
-        [Authorize]
         [HttpPut]
+        [Authorize]
         public async Task<ActionResult> Update([FromBody]ProductVO vo)
         {
             if (vo == null) return BadRequest();
