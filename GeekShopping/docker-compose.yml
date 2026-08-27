@@ -1,0 +1,41 @@
+services:
+  geekshopping.web:
+    image: ${DOCKER_REGISTRY-}geekshoppingweb
+    build:
+      context: .
+      dockerfile: GeekShopping.Web/Dockerfile
+
+  geekshopping.cartapi:
+    image: ${DOCKER_REGISTRY-}geekshoppingcartapi
+    build:
+      context: .
+      dockerfile: GeekShopping.CartAPI/Dockerfile
+
+
+  geekshopping.couponapi:
+    image: ${DOCKER_REGISTRY-}geekshoppingcouponapi
+    build:
+      context: .
+      dockerfile: GeekShopping.CouponAPI/Dockerfile
+
+
+  geekshopping.identityserver:
+    image: ${DOCKER_REGISTRY-}geekshoppingidentityserver
+    build:
+      context: .
+      dockerfile: GeekShopping.IdentityServer/Dockerfile
+
+
+  geekshopping.orderapi:
+    image: ${DOCKER_REGISTRY-}geekshoppingorderapi
+    build:
+      context: .
+      dockerfile: GeekShopping.OrderAPI/Dockerfile
+
+
+  geekshopping.productapi:
+    image: ${DOCKER_REGISTRY-}geekshoppingproductapi
+    build:
+      context: .
+      dockerfile: GeekShopping.ProductAPI/Dockerfile
+

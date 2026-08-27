@@ -4,6 +4,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>566d9b11-ab42-4896-a406-86322e40fc0e</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
 <ItemGroup>
@@ -15,6 +18,7 @@
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
+	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.24.2-preview.1" />
 	<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
 	<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.5" />

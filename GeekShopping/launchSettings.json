@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "geekshopping.web": "StartDebugging",
+        "geekshopping.cartapi": "StartDebugging",
+        "geekshopping.couponapi": "StartDebugging",
+        "geekshopping.identityserver": "StartDebugging",
+        "geekshopping.orderapi": "StartDebugging",
+        "geekshopping.productapi": "StartDebugging"
+      }
+    }
+  }
+}

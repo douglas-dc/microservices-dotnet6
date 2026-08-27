@@ -12,4 +12,7 @@
     <Project Path="GeekShopping.OrderAPI/GeekShopping.OrderAPI.csproj" Id="5c5344c1-d029-4e9a-bf1c-742ce0477389" />
     <Project Path="GeekShopping.ProductAPI/GeekShopping.ProductAPI.csproj" />
   </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>
