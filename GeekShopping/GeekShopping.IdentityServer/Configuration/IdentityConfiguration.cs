@@ -76,12 +76,11 @@ namespace GeekShopping.IdentityServer.Configuration
 
                     RedirectUris =
                     {
-                        "http://geekshopping.localhost:4430/signin-oidc"
+                        "http://localhost:4430/signin-oidc"
                     },
-
                     PostLogoutRedirectUris =
                     {
-                        "http://geekshopping.localhost:4430/signout-callback-oidc"
+                        "http://localhost:4430/signout-callback-oidc"
                     },
 
                     AllowedScopes =

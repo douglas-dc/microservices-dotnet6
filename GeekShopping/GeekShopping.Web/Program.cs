@@ -21,6 +21,9 @@ builder.Services.AddAuthentication(options =>
     {
         options.ExpireTimeSpan =
             TimeSpan.FromMinutes(10);
+
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     })
 .AddOpenIdConnect(
     "oidc",
@@ -31,6 +34,15 @@ builder.Services.AddAuthentication(options =>
                 "ServiceUrls:IdentityServer"];
 
         options.RequireHttpsMetadata = false;
+
+        options.NonceCookie.SameSite = SameSiteMode.Lax;
+        options.NonceCookie.SecurePolicy =
+            CookieSecurePolicy.SameAsRequest;
+
+        options.CorrelationCookie.SameSite =
+            SameSiteMode.Lax;
+        options.CorrelationCookie.SecurePolicy =
+            CookieSecurePolicy.SameAsRequest;
 
         options.GetClaimsFromUserInfoEndpoint = true;
 

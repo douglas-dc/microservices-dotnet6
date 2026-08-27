@@ -5,13 +5,17 @@ services:
     build:
       context: .
       dockerfile: GeekShopping.Web/Dockerfile
+
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+
     ports:
       - "4430:80"
+
     extra_hosts:
       - "identityserver.localhost:host-gateway"
+
     depends_on:
       geekshopping.productapi:
         condition: service_started
@@ -22,19 +26,26 @@ services:
       geekshopping.identityserver:
         condition: service_started
 
+    volumes:
+      - web_dataprotection:/root/.aspnet/DataProtection-Keys
+
 
   geekshopping.cartapi:
     image: ${DOCKER_REGISTRY-}geekshoppingcartapi
     build:
       context: .
       dockerfile: GeekShopping.CartAPI/Dockerfile
+
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+
     ports:
       - "4445:80"
+
     extra_hosts:
       - "identityserver.localhost:host-gateway"
+
     depends_on:
       mysql:
         condition: service_healthy
@@ -49,13 +60,17 @@ services:
     build:
       context: .
       dockerfile: GeekShopping.CouponAPI/Dockerfile
+
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+
     ports:
       - "4450:80"
+
     extra_hosts:
       - "identityserver.localhost:host-gateway"
+
     depends_on:
       mysql:
         condition: service_healthy
@@ -63,14 +78,21 @@ services:
 
   geekshopping.identityserver:
     image: ${DOCKER_REGISTRY-}geekshoppingidentityserver
+
     build:
       context: .
       dockerfile: GeekShopping.IdentityServer/Dockerfile
+
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+
     ports:
       - "4435:80"
+
+    volumes:
+      - identityserver_dataprotection:/root/.aspnet/DataProtection-Keys
+
     depends_on:
       mysql:
         condition: service_healthy
@@ -81,13 +103,17 @@ services:
     build:
       context: .
       dockerfile: GeekShopping.OrderAPI/Dockerfile
+
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+
     ports:
       - "4460:80"
+
     extra_hosts:
       - "identityserver.localhost:host-gateway"
+
     depends_on:
       mysql:
         condition: service_healthy
@@ -100,13 +126,17 @@ services:
     build:
       context: .
       dockerfile: GeekShopping.ProductAPI/Dockerfile
+
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+
     ports:
       - "4440:80"
+
     extra_hosts:
       - "identityserver.localhost:host-gateway"
+
     depends_on:
       mysql:
         condition: service_healthy
@@ -176,3 +206,5 @@ services:
 
 volumes:
   mysql_data:
+  web_dataprotection:
+  identityserver_dataprotection:
