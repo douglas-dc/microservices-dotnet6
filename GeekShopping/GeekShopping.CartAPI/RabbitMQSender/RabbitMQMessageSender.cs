@@ -11,42 +11,70 @@ namespace GeekShopping.CartAPI.RabbitMQSender
         private readonly string _hostName;
         private readonly string _password;
         private readonly string _userName;
+
         private IConnection _connection;
 
         public RabbitMQMessageSender()
         {
-            _hostName = "localhost";
+            _hostName = "rabbitmq";
             _password = "guest";
             _userName = "guest";
         }
 
-        public void SendMessage(BaseMessage message, string queueName)
+        public void SendMessage(
+            BaseMessage message,
+            string queueName)
         {
             var factory = new ConnectionFactory
             {
                 HostName = _hostName,
+                Port = 5672,
                 UserName = _userName,
-                Password = _password
+                Password = _password,
+
+                AutomaticRecoveryEnabled = true,
+                NetworkRecoveryInterval =
+                    TimeSpan.FromSeconds(10)
             };
 
-            _connection = factory.CreateConnection();
+            _connection =
+                factory.CreateConnection();
 
-            using var channel = _connection.CreateModel();
-            channel.QueueDeclare(queue: queueName, false, false, false, arguments: null);
-            byte[] body = GetMessageAsByteArray(message);
-            channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
+            using var channel =
+                _connection.CreateModel();
+
+            channel.QueueDeclare(
+                queue: queueName,
+                durable: false,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
+
+            byte[] body =
+                GetMessageAsByteArray(message);
+
+            channel.BasicPublish(
+                exchange: "",
+                routingKey: queueName,
+                basicProperties: null,
+                body: body);
         }
 
-        private byte[] GetMessageAsByteArray(BaseMessage message)
+        private byte[] GetMessageAsByteArray(
+            BaseMessage message)
         {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
+            var options =
+                new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                };
 
-            var json = JsonSerializer.Serialize<CheckoutHeaderVO>((CheckoutHeaderVO)message, options);
-            var body = Encoding.UTF8.GetBytes(json);
-            return body;
+            var json =
+                JsonSerializer.Serialize(
+                    (CheckoutHeaderVO)message,
+                    options);
+
+            return Encoding.UTF8.GetBytes(json);
         }
     }
 }

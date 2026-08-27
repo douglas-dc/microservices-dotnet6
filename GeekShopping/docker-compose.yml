@@ -1,15 +1,47 @@
 services:
+
   geekshopping.web:
     image: ${DOCKER_REGISTRY-}geekshoppingweb
     build:
       context: .
       dockerfile: GeekShopping.Web/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "4430:80"
+    extra_hosts:
+      - "identityserver.localhost:host-gateway"
+    depends_on:
+      geekshopping.productapi:
+        condition: service_started
+      geekshopping.cartapi:
+        condition: service_started
+      geekshopping.couponapi:
+        condition: service_started
+      geekshopping.identityserver:
+        condition: service_started
+
 
   geekshopping.cartapi:
     image: ${DOCKER_REGISTRY-}geekshoppingcartapi
     build:
       context: .
       dockerfile: GeekShopping.CartAPI/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "4445:80"
+    extra_hosts:
+      - "identityserver.localhost:host-gateway"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      geekshopping.couponapi:
+        condition: service_started
 
 
   geekshopping.couponapi:
@@ -17,6 +49,16 @@ services:
     build:
       context: .
       dockerfile: GeekShopping.CouponAPI/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "4450:80"
+    extra_hosts:
+      - "identityserver.localhost:host-gateway"
+    depends_on:
+      mysql:
+        condition: service_healthy
 
 
   geekshopping.identityserver:
@@ -24,6 +66,14 @@ services:
     build:
       context: .
       dockerfile: GeekShopping.IdentityServer/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "4435:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
 
 
   geekshopping.orderapi:
@@ -31,6 +81,18 @@ services:
     build:
       context: .
       dockerfile: GeekShopping.OrderAPI/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "4460:80"
+    extra_hosts:
+      - "identityserver.localhost:host-gateway"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
 
   geekshopping.productapi:
@@ -38,4 +100,79 @@ services:
     build:
       context: .
       dockerfile: GeekShopping.ProductAPI/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "4440:80"
+    extra_hosts:
+      - "identityserver.localhost:host-gateway"
+    depends_on:
+      mysql:
+        condition: service_healthy
 
+
+  # ==========================================================
+  # MYSQL
+  # ==========================================================
+
+  mysql:
+    image: mysql:8.3
+    container_name: geekshopping-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -u root -padmin123 --silent"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+
+  # ==========================================================
+  # RABBITMQ
+  # ==========================================================
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: geekshopping-rabbitmq
+    restart: unless-stopped
+
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "rabbitmq-diagnostics",
+          "-q",
+          "ping"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+
+volumes:
+  mysql_data:

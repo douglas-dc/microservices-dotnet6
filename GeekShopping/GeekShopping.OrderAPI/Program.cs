@@ -7,35 +7,53 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// MySQL
 
-var connection = builder.Configuration["MySQlConnection:MySQlConnectionString"];
+var connection =
+    builder.Configuration["MySQLConnection:MySQLConnectionString"];
 
-builder.Services.AddDbContext<MySQLContext>(options => options.UseMySql(
-    connection,
-    new MySqlServerVersion(new Version(8, 0, 29)))
+builder.Services.AddDbContext<MySQLContext>(
+    options => options.UseMySql(
+        connection,
+        new MySqlServerVersion(
+            new Version(8, 3, 0)))
 );
 
-var dbContextBuilder = new DbContextOptionsBuilder<MySQLContext>();
+// Repository
+
+var dbContextBuilder =
+    new DbContextOptionsBuilder<MySQLContext>();
+
 dbContextBuilder.UseMySql(
     connection,
-    new MySqlServerVersion(new Version(8, 0, 29))
-);
+    new MySqlServerVersion(
+        new Version(8, 3, 0)));
 
-builder.Services.AddSingleton(new OrderRepository(dbContextBuilder.Options));
+builder.Services.AddSingleton(
+    new OrderRepository(
+        dbContextBuilder.Options));
+
+// RabbitMQ Consumer
 
 builder.Services.AddHostedService<RabbitMQCheckoutConsumer>();
 
 builder.Services.AddControllers();
 
+// Authentication
+
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://localhost:4435/";
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
+        options.Authority =
+            builder.Configuration["ServiceUrls:IdentityServer"];
+
+        options.RequireHttpsMetadata = false;
+
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateAudience = false
+            };
     });
 
 builder.Services.AddAuthorization(options =>
@@ -43,53 +61,74 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ApiScope", policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.RequireClaim("scope", "geek_shopping");
+
+        policy.RequireClaim(
+            "scope",
+            "geek_shopping");
     });
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Swagger
+
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeekShopping.OrderAPI", Version = "v1" });
-    c.EnableAnnotations();
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = @"Enter 'Bearer' [space] and your token!",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+    c.SwaggerDoc(
+        "v1",
+        new OpenApiInfo
         {
-            new OpenApiSecurityScheme
+            Title = "GeekShopping.OrderAPI",
+            Version = "v1"
+        });
+
+    c.EnableAnnotations();
+
+    c.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
+        {
+            Description =
+                @"Enter 'Bearer' [space] and your token!",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+
+    c.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Reference =
+                        new OpenApiReference
+                        {
+                            Type =
+                                ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                    Scheme = "oauth2",
+                    Name = "Bearer",
+                    In = ParameterLocation.Header
                 },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In= ParameterLocation.Header
-            },
-            new List<string> ()
-        }
-    });
+                new List<string>()
+            }
+        });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GeekShopping.OrderAPI v1"));
-}
 
-app.UseHttpsRedirection();
+    app.UseSwaggerUI(
+        c => c.SwaggerEndpoint(
+            "/swagger/v1/swagger.json",
+            "GeekShopping.OrderAPI v1"));
+}
 
 app.UseRouting();
 
