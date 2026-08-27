@@ -59,11 +59,11 @@ builderServices.AddDeveloperSigningCredential();
 
 var app = builder.Build();
 
-var initializer =
-    app.Services
-        .CreateScope()
-        .ServiceProvider
-        .GetService<IDbInitializer>();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<MySQLContext>();
+    context.Database.Migrate();
+}
 
 // HTTP pipeline
 
@@ -80,9 +80,11 @@ app.UseIdentityServer();
 
 app.UseAuthorization();
 
-// Initialize database
-
-initializer.Initialize();
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    initializer.Initialize();
+}
 
 app.MapControllerRoute(
     name: "default",
