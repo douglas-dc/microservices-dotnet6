@@ -11,6 +11,7 @@
   <Folder Name="/Services/">
     <Project Path="GeekShopping.CartAPI/GeekShopping.CartAPI.csproj" Id="23b19f72-ba41-4e55-87cc-3d5fcf2c54d3" />
     <Project Path="GeekShopping.CouponAPI/GeekShopping.CouponAPI.csproj" Id="2d235ad8-c5de-4d0a-8e81-f895a762caf5" />
+    <Project Path="GeekShopping.Email/GeekShopping.Email.csproj" Id="7440640f-833c-419d-ab8c-5ae20ce8e9f7" />
     <Project Path="GeekShopping.IdentityServer/GeekShopping.IdentityServer.csproj" Id="68d7e5da-bb33-4247-8ce1-895116590fe6" />
     <Project Path="GeekShopping.OrderAPI/GeekShopping.OrderAPI.csproj" Id="5c5344c1-d029-4e9a-bf1c-742ce0477389" />
     <Project Path="GeekShopping.PaymentAPI/GeekShopping.PaymentAPI.csproj" Id="c819db0d-44d5-47bd-9a41-4f682f995c10" />
