@@ -2,6 +2,9 @@
   <Folder Name="/FrontEnd/">
     <Project Path="GeekShopping.Web/GeekShopping.Web.csproj" />
   </Folder>
+  <Folder Name="/Gateway/">
+    <Project Path="GeekShopping.APIGateway/GeekShopping.APIGateway.csproj" Id="54166c5e-3dc8-41bd-8e0c-a3a33c319070" />
+  </Folder>
   <Folder Name="/Integration/">
     <Project Path="GeekShopping.MessageBus/GeekShopping.MessageBus.csproj" Id="600e49de-fdc1-4dfa-ab17-4a70e40e278a" />
   </Folder>
